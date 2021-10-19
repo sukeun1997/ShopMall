@@ -7,13 +7,15 @@ import shop.constant.ItemSellStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "item")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Item {
+public class Item extends BaseEntity {
 
     @Id
     @Column(name = "item_id")
@@ -35,10 +37,4 @@ public class Item {
 
     @Enumerated(EnumType.ORDINAL)
     private ItemSellStatus itemSellStatus; // 상품 판매 상태
-
-    private LocalDateTime regTime; //등록시간
-
-    private LocalDateTime updateTime; // 수정 시간
-
-
 }

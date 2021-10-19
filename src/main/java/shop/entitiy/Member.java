@@ -7,12 +7,14 @@ import shop.DTO.MemberFormDto;
 import shop.constant.Role;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "member")
 @Data
 @ToString
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,7 +31,6 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
 
     public static Member createMember(MemberFormDto memberFormDto
     ,PasswordEncoder passwordEncoder) {
