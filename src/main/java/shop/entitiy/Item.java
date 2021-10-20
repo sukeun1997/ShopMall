@@ -1,8 +1,6 @@
 package shop.entitiy;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import shop.constant.ItemSellStatus;
 
 import javax.persistence.*;
@@ -11,30 +9,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "item")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name="item")
+@Getter
+@Setter
+@ToString
 public class Item extends BaseEntity {
 
     @Id
-    @Column(name = "item_id")
+    @Column(name="item_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;            // 상품 코드
+    private Long id;       //상품 코드
 
     @Column(nullable = false, length = 50)
-    private String itemName;    // 상품명
+    private String itemNm; //상품명
 
-    @Column(name = "price", nullable = false)
-    private int price;          // 가격
+    @Column(name="price", nullable = false)
+    private int price; //가격
 
     @Column(nullable = false)
-    private int stockNumber;    // 재고수량
+    private int stockNumber; //재고수량
 
-    @Lob // 255개 이상의 문자를 저장하고 싶을때 지정
+    @Lob
     @Column(nullable = false)
-    private String itemDetail;  // 상품 설명
+    private String itemDetail; //상품 상세 설명
 
-    @Enumerated(EnumType.ORDINAL)
-    private ItemSellStatus itemSellStatus; // 상품 판매 상태
+    @Enumerated(EnumType.STRING)
+    private ItemSellStatus itemSellStatus; //상품 판매 상태
+
 }

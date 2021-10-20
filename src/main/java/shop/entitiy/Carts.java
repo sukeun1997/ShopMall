@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class Carts extends BaseEntity{
 
     @Id
-    @Column(name = "card_id")
+    @Column(name = "cart_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 

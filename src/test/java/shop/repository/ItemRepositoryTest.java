@@ -36,7 +36,7 @@ class ItemRepositoryTest {
     void createItemTest() {
         for (int i = 0; i < 10; i++) {
             Item item = new Item();
-            item.setItemName("테스트 상풍"+i);
+            item.setItemNm("테스트 상풍"+i);
             item.setPrice(1000+i);
             item.setItemDetail("테스트 상품 상세 설명"+i);
             item.setItemSellStatus(ItemSellStatus.SELL);
@@ -51,7 +51,7 @@ class ItemRepositoryTest {
     void createItemTest2() {
         for (int i = 1; i <= 5; i++) {
             Item item = new Item();
-            item.setItemName("테스트 상풍"+i);
+            item.setItemNm("테스트 상풍"+i);
             item.setPrice(1000+i);
             item.setItemDetail("테스트 상품 상세 설명"+i);
             item.setItemSellStatus(ItemSellStatus.SELL);
@@ -63,7 +63,7 @@ class ItemRepositoryTest {
 
         for (int i = 6; i <= 10; i++) {
             Item item = new Item();
-            item.setItemName("테스트 상풍"+i);
+            item.setItemNm("테스트 상풍"+i);
             item.setPrice(1000+i);
             item.setItemDetail("테스트 상품 상세 설명"+i);
             item.setItemSellStatus(ItemSellStatus.SOLD_OUT);
@@ -78,7 +78,7 @@ class ItemRepositoryTest {
     @DisplayName("상품명 조회 테스트")
     void findByItemNameTest() {
         this.createItemTest();
-        List<Item> itemList = itemRepository.findByItemName("테스트 상품1");
+        List<Item> itemList = itemRepository.findByItemNm("테스트 상품1");
         List<Item> itemList1 = itemRepository.findByPriceLessThan(10005);
         itemList.stream().forEach(System.out::println);
         itemList1.stream().forEach(System.out::println);

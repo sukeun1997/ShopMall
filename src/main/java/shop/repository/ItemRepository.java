@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long>,QuerydslPredicateExecutor<Item> {
 
-    List<Item> findByItemName(String itemName);
+    List<Item> findByItemNm(String itemName);
 
     List<Item> findByPriceLessThan(int price);
 }
