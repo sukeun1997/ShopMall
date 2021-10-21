@@ -1,6 +1,11 @@
 package shop.entitiy;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
+import shop.repository.ItemImgRepository;
+import shop.service.FileService;
 
 import javax.persistence.*;
 
@@ -31,4 +36,5 @@ public class ItemImg extends BaseEntity{
         this.imgName = imgName;
         this.imgUrl = imgUrl;
     }
+
 }
