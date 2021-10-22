@@ -1,11 +1,15 @@
 package shop.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import shop.DTO.ItemFormDto;
 import shop.DTO.ItemImgDto;
+import shop.DTO.ItemSearchDto;
+import shop.DTO.MainItemDto;
 import shop.entitiy.Item;
 import shop.entitiy.ItemImg;
 import shop.repository.ItemImgRepository;
@@ -79,5 +83,14 @@ public class ItemService {
         return item.getId();
     }
 
+    @Transactional(readOnly = true) // 검색은 데이터의 수정이 일어나지 않으므로
+    public Page<Item> getAdminItemPage(ItemSearchDto itemSearchDto, Pageable pageable) {
+        return itemRepository.getAdminItemPage(itemSearchDto, pageable);
+    }
 
+
+    @Transactional(readOnly = true)
+    public Page<MainItemDto> getMainItemPage(ItemSearchDto itemSearchDto, Pageable pageable) {
+        return itemRepository.getMainItemPage(itemSearchDto, pageable);
+    }
 }
