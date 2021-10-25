@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.entitiy.Member;
 import shop.repository.MemberRepository;
 
-import javax.validation.constraints.Email;
-
 @Service // Bean 등록을 위해 (서비스 레이어)
 @Transactional // 에러 발생시 변경된 데이터를 이전 상태로 롤백
 @RequiredArgsConstructor // final 이나 @Nonnull 이 붙은 필드에 생성자를 생성
@@ -41,7 +39,7 @@ public class MemberService implements UserDetailsService {
         }
 
         return User.builder()
-                .username(member.getName())
+                .username(member.getEmail())
                 .password(member.getPassword())
                 .roles(member.getRole().toString())
                 .build(); // UserDetail -> User 변환

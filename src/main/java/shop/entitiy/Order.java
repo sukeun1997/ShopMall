@@ -1,6 +1,8 @@
+
 package shop.entitiy;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import shop.constant.OrderStatus;
 
 import javax.persistence.*;
@@ -10,11 +12,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
-@Data
+@Getter
+@Setter
 public class Order extends BaseEntity {
 
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
     @Column(name = "order_id")
     private Long id;
 
@@ -22,12 +24,13 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private LocalDateTime orderDate; // 주문일
+    private LocalDateTime orderDate; //주문일
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus; // 주문 상태
+    private OrderStatus orderStatus; //주문상태
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true , fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL
+            , orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public void addOrderItem(OrderItem orderItem) {
@@ -35,22 +38,25 @@ public class Order extends BaseEntity {
         orderItem.setOrder(this);
     }
 
-    public static Order CreateOrder(Member member, List<OrderItem> orderItemList) {
+    public static Order createOrder(Member member, List<OrderItem> orderItemList) {
         Order order = new Order();
         order.setMember(member);
-        for (OrderItem orderItem : orderItemList) {
+
+        for(OrderItem orderItem : orderItemList) {
             order.addOrderItem(orderItem);
         }
-        order.setOrderDate(LocalDateTime.now());
+
         order.setOrderStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
         return order;
     }
 
     public int getTotalPrice() {
         int totalPrice = 0;
-        for (OrderItem orderItem : orderItems) {
+        for(OrderItem orderItem : orderItems){
             totalPrice += orderItem.getTotalPrice();
         }
         return totalPrice;
     }
+
 }

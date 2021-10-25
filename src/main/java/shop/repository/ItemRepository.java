@@ -11,4 +11,6 @@ public interface ItemRepository extends JpaRepository<Item, Long>,QuerydslPredic
     List<Item> findByItemNm(String itemName);
 
     List<Item> findByPriceLessThan(int price);
+
+
 }
