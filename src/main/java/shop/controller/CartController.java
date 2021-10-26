@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import shop.DTO.CartDetailDto;
 import shop.DTO.CartItemDto;
 import shop.service.CartService;
 
@@ -47,5 +50,12 @@ public class CartController {
         }
 
         return new ResponseEntity(cartItemId, HttpStatus.OK);
+    }
+
+    @GetMapping("/cart")
+    public String orderHist(Principal principal, Model model) {
+        List<CartDetailDto> cartDetailDtos = cartService.getCartList(principal.getName());
+        model.addAttribute("cartItems", cartDetailDtos);
+        return "cart/cartList";
     }
 }
