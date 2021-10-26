@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import shop.DTO.CartDetailDto;
 import shop.DTO.CartItemDto;
+import shop.DTO.CartOrderDto;
 import shop.service.CartService;
 
 import javax.validation.Valid;
@@ -67,5 +68,22 @@ public class CartController {
         }
         cartService.updateCartItemCount(cartItemId, count);
         return new ResponseEntity(cartItemId, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/cartItem/{cartItemId}")
+    public @ResponseBody
+    ResponseEntity deleteCartItem(@PathVariable("cartItemId") Long cartItemId, Principal principal) {
+        if (!cartService.validateCartItem(cartItemId, principal.getName())) {
+            return new ResponseEntity("수정 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+        cartService.deleteCartItem(cartItemId);
+        return new ResponseEntity(cartItemId, HttpStatus.OK);
+    }
+
+    @PostMapping("/cart/orders")
+    public @ResponseBody
+    ResponseEntity orderCartItem(@RequestBody CartOrderDto cartOrderDto, Principal principal) {
+        List<CartOrderDto> cartOrderDtoList = cartOrderDto.getCartOrderDtoList();
+
     }
 }
