@@ -49,14 +49,14 @@ class CartsTest {
         Member member = createMember("test@email.com","1234");
         memberRepository.save(member);
 
-        Carts carts = new Carts();
+        Cart carts = new Cart();
         carts.setMember(member);
         cartRepository.save(carts);
 
         entityManager.flush();
         entityManager.clear();
 
-        Carts savedCart = cartRepository.findById(carts.getId())
+        Cart savedCart = cartRepository.findById(carts.getId())
                 .orElseThrow(EntityNotFoundException::new);
         assertEquals(savedCart.getMember().getId(), member.getId());
     }

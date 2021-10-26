@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "cart")
 @Data
 @ToString
-public class Carts extends BaseEntity{
+public class Cart extends BaseEntity{
 
     @Id
     @Column(name = "cart_id")
@@ -19,4 +19,11 @@ public class Carts extends BaseEntity{
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    // 장바구니 생성
+    public static Cart createCart(Member member) {
+        Cart cart = new Cart();
+        cart.setMember(member);
+        return cart;
+    }
 }
