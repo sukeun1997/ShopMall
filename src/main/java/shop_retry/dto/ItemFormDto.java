@@ -34,13 +34,13 @@ public class ItemFormDto {
 
     private List<Long> itemImgIds = new ArrayList<>();
 
-    private ModelMapper modelMapper = new ModelMapper();
+    private static ModelMapper modelMapper = new ModelMapper();
 
     public Item createItem() {
         return modelMapper.map(this, Item.class);
     }
 
-    public ItemFormDto of(Item item) {
+    public static ItemFormDto of(Item item) {
       return modelMapper.map(item,ItemFormDto.class);
     }
 }

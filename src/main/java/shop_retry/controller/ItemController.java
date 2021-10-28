@@ -15,8 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 import shop_retry.dto.ItemFormDto;
 import shop_retry.dto.ItemSearchDto;
 import shop_retry.entity.Item;
+import shop_retry.repository.ItemRepository;
 import shop_retry.service.ItemService;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,7 @@ import java.util.Optional;
 public class ItemController {
 
     private final ItemService itemService;
+    private final ItemRepository itemRepository;
 
     @GetMapping(value = "/admin/item/new")
     public String getItem(Model model) {
@@ -69,5 +72,45 @@ public class ItemController {
         // 상품 관리 메뉴 하단에 보여줄 페이지 번호의 최대 개수
         model.addAttribute("maxPage", 5);
         return "item/itemMng";
+    }
+
+    // 관리자 페이지 상품 정보 수정 들어가기
+    @GetMapping("/admin/item/{itemId}")
+    public String getItemDetail(@PathVariable("itemId") Long itemId, Model model) {
+
+        try {
+            ItemFormDto item = itemService.itemDtl(itemId);
+            model.addAttribute("itemFormDto", item);
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("itemFormDto", new ItemFormDto());
+            return "item/itemForm";
+        }
+        return "item/itemForm";
+    }
+
+    @PostMapping("/admin/item/{itemid}")
+    public String updateItem(
+                             @Valid ItemFormDto itemFormDto,
+                             @RequestParam("itemImgFile") List<MultipartFile> itemImgFileList,
+                             BindingResult bindingResult,
+                             Model model) {
+
+        if (bindingResult.hasErrors()) {
+            return "item/itemForm";
+        }
+        if (itemImgFileList.get(0).isEmpty() && itemFormDto.getId() == null) {
+            model.addAttribute("errorMessage", "첫번째 상품 이미지는 필수 입력 값 입니다.");
+            return "item/itemForm";
+        }
+
+        try {
+            itemService.updateItem(itemFormDto, itemImgFileList);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "상품 수정 중 에러가 발생하였습니다.");
+            return "item/itemForm";
+        }
+
+        return "redirect:/";
     }
 }

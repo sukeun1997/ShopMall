@@ -1,12 +1,14 @@
 package shop_retry.entity;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
 @Data
 @Table(name = "item_img")
+@ToString
 public class ItemImg extends BaseEntity{
 
     @Id

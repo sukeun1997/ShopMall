@@ -1,8 +1,10 @@
 package shop_retry.dto;
 
+import lombok.Data;
 import org.modelmapper.ModelMapper;
 import shop_retry.entity.ItemImg;
 
+@Data
 public class ItemImgDto {
 
     private Long id;
@@ -15,9 +17,9 @@ public class ItemImgDto {
 
     private String repImgYn;
 
-    private ModelMapper modelMapper = new ModelMapper();
+    private static ModelMapper modelMapper = new ModelMapper();
 
-    public ItemImg of() {
-        return modelMapper.map(this, ItemImg.class);
+    public static ItemImgDto of(ItemImg itemImg) {
+        return modelMapper.map(itemImg,ItemImgDto.class);
     }
 }

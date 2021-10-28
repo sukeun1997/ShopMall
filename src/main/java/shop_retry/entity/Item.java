@@ -2,9 +2,9 @@ package shop_retry.entity;
 
 import lombok.Data;
 import shop_retry.constant.ItemSellStatus;
+import shop_retry.dto.ItemFormDto;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Data
@@ -33,8 +33,11 @@ public class Item extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private ItemSellStatus itemSellStatus; //상품 판매 상태
 
-    @OneToMany(mappedBy = "item",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    List<ItemImg> itemImgList;
-
-
+    public void updateItem(ItemFormDto itemFormDto) {
+        this.setItemNm(itemFormDto.getItemNm());
+        this.setItemDetail(itemFormDto.getItemDetail());
+        this.setPrice(itemFormDto.getPrice());
+        this.setItemSellStatus(itemFormDto.getItemSellStatus());
+        this.setStockNumber(itemFormDto.getStockNumber());
+    }
 }
