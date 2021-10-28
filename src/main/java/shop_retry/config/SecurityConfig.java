@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import shop.config.CustomAuthenticationEntryPoint;
 import shop_retry.service.MemberService;
 
 
@@ -25,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
 
         // 로그인 성공,실패 / 로그아웃
         http.formLogin().loginPage("/members/login")
@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated();
 
         // 나머지 예외처리 핸들링
-        http.exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+        http.exceptionHandling().authenticationEntryPoint(new CustomAuthentication());
     }
 
     @Override

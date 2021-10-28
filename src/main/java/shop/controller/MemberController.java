@@ -1,18 +1,16 @@
 package shop.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-
 import org.springframework.validation.BindingResult;
-import shop_retry.dto.MemberFormDto;
-import shop_retry.entity.Member;
-import shop_retry.service.MemberService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import shop.DTO.MemberFormDto;
+import shop.entitiy.Member;
+import shop.service.MemberService;
 
 import javax.validation.Valid;
 
@@ -40,7 +38,7 @@ public class MemberController {
         }
 
         try {
-            shop_retry.entity.Member member = Member.createMember(memberFormDto, passwordEncoder);
+            Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());

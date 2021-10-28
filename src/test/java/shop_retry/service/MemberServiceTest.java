@@ -6,11 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import shop_retry.dto.MemberFormDto;
 import shop_retry.entity.Member;
 import shop_retry.repository.MemberRepository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,6 +31,9 @@ class MemberServiceTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    EntityManager entityManager;
 
     public Member CreateMember() {
         MemberFormDto member = new MemberFormDto();
@@ -49,5 +56,20 @@ class MemberServiceTest {
 
     }
 
+    @Test
+    @DisplayName("auditing 테스트")
+    @WithMockUser(username = "길동", roles = "user")
+    void auditorTest() {
+        Member member = new Member();
+        memberRepository.save(member);
+        entityManager.flush();
+        entityManager.clear();
 
+        Member member1 = memberRepository.findById(member.getId()).orElseThrow(EntityNotFoundException::new);
+
+        System.out.println(member1.getRegTime());
+        System.out.println(member1.getUpdateTime());
+        System.out.println(member1.getCreatedBy());
+        System.out.println(member1.getModifiedBy());
+    }
 }

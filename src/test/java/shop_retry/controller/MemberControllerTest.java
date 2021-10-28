@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import shop_retry.dto.MemberFormDto;
 import shop_retry.entity.Member;
@@ -16,6 +18,8 @@ import shop_retry.repository.MemberRepository;
 import shop_retry.service.MemberService;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -63,5 +67,19 @@ class MemberControllerTest {
         createMember(email,password);
         mockMvc.perform(formLogin().userParameter("email").loginProcessingUrl("/members/login").user(email).password("12345"))
                 .andExpect(SecurityMockMvcResultMatchers.unauthenticated());
+    }
+
+    @Test
+    @DisplayName("유저 접근 차단")
+    @WithMockUser(username = "user",roles = "USER")
+    void access_test() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/admin/item/new")).andDo(print()).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("관리자 접근 승인")
+    @WithMockUser(username = "user",roles = "ADMIN")
+    void access_test_admin() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/admin/item/new")).andDo(print()).andExpect(status().isOk());
     }
 }
