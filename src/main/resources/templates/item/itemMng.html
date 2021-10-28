@@ -57,8 +57,8 @@
         <td>
           <a th:href="'/admin/item/'+${item.id}" th:text="${item.itemNm}"></a>
         </td>
-        <!--/*@thymesVar id="shop" type=""*/-->
-        <td th:text="${item.itemSellStatus == T(shop.constant.ItemSellStatus).SELL} ? '판매중' : '품절'"></td>
+        <!--/*@thymesVar id="shop_retry" type=""*/-->
+        <td th:text="${item.itemSellStatus == T(shop_retry.constant.ItemSellStatus).SELL} ? '판매중' : '품절'"></td>
         <td th:text="${item.createdBy}"></td>
         <td th:text="${item.regTime}"></td>
       </tr>
