@@ -9,8 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.thymeleaf.util.StringUtils;
 import shop_retry.constant.ItemSellStatus;
 import shop_retry.dto.ItemSearchDto;
+import shop_retry.dto.MainItemDto;
+import shop_retry.dto.QMainItemDto;
 import shop_retry.entity.Item;
 import shop_retry.entity.QItem;
+import shop_retry.entity.QItemImg;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -40,6 +43,37 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
         Long totalCount = results.getTotal();
         List<Item> itemList = results.getResults();
         return new PageImpl<>(itemList, pageable, totalCount);
+    }
+
+    @Override
+    public Page<MainItemDto> getMainItemPage(ItemSearchDto itemSearchDto, Pageable pageable) {
+
+        QItem qItem = QItem.item;
+        QItemImg qItemImg= QItemImg.itemImg;
+        QueryResults<MainItemDto> results = queryFactory
+                .select(new QMainItemDto(
+                        qItem.id,
+                        qItem.itemNm,
+                        qItem.itemDetail,
+                        qItemImg.imgUrl,
+                        qItem.price))
+                .from(qItemImg)
+                .join(qItemImg.item, qItem)
+                .where(qItemImg.repimgYn.eq("Y"))
+                .where(ItemNmLike(itemSearchDto.getSearchQuery()))
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .orderBy(QItem.item.id.desc())
+                .fetchResults();
+
+        Long total = results.getTotal();
+        List<MainItemDto> items =results.getResults();
+
+        return new PageImpl<>(items, pageable, total);
+    }
+
+    private BooleanExpression ItemNmLike(String searchQuery) {
+        return QItem.item.itemNm.like("%" + searchQuery + "%");
     }
 
     private BooleanExpression ItemNmCheck(String searchBy, String searchQuery) {

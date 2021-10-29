@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import shop_retry.dto.ItemFormDto;
 import shop_retry.dto.ItemImgDto;
 import shop_retry.dto.ItemSearchDto;
+import shop_retry.dto.MainItemDto;
 import shop_retry.entity.Item;
 import shop_retry.entity.ItemImg;
 import shop_retry.repository.ItemImgRepository;
@@ -55,6 +56,10 @@ public class ItemService {
         return itemRepository.getAdminItemPage(itemSearchDto, pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Page<MainItemDto> getMainPage(ItemSearchDto itemSearchDto, Pageable pageable) {
+        return itemRepository.getMainItemPage(itemSearchDto, pageable);
+    }
     @Transactional(readOnly = true)
     public ItemFormDto itemDtl(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
