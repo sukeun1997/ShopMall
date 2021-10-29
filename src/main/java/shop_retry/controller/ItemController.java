@@ -76,7 +76,7 @@ public class ItemController {
 
     // 관리자 페이지 상품 정보 수정 들어가기
     @GetMapping("/admin/item/{itemId}")
-    public String getItemDetail(@PathVariable("itemId") Long itemId, Model model) {
+    public String getItemDetailAdmin(@PathVariable("itemId") Long itemId, Model model) {
 
         try {
             ItemFormDto item = itemService.itemDtl(itemId);
@@ -87,6 +87,16 @@ public class ItemController {
             return "item/itemForm";
         }
         return "item/itemForm";
+    }
+
+    @GetMapping("/item/{itemId}")
+    public String getItemDetailUser(@PathVariable("itemId") Long itemId, Model model) {
+
+
+            ItemFormDto item = itemService.itemDtl(itemId);
+            model.addAttribute("item", item);
+
+        return "item/itemDtl";
     }
 
     @PostMapping("/admin/item/{itemid}")
