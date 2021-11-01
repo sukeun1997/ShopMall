@@ -40,4 +40,13 @@ public class Item extends BaseEntity{
         this.setItemSellStatus(itemFormDto.getItemSellStatus());
         this.setStockNumber(itemFormDto.getStockNumber());
     }
+
+    public void removeStock(int count) {
+        int restStock = this.stockNumber - count;
+
+        if (restStock < 0) {
+            throw new IllegalArgumentException("재고가 부족합니다. 현재 재고 수량 " + this.stockNumber);
+        }
+        this.stockNumber = restStock;
+    }
 }
