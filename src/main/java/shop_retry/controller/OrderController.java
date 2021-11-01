@@ -1,21 +1,24 @@
 package shop_retry.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import shop_retry.dto.OrderDto;
+import shop_retry.dto.OrderHistDto;
 import shop_retry.service.OrderService;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 @Transactional
@@ -46,6 +49,14 @@ public class OrderController {
         return new ResponseEntity(OrderId, HttpStatus.OK);
     }
 
-    @GetMapping("/orders")
+    @GetMapping({"/orders", "/orders/{page}"})
+    public String getOrderHist(@PathVariable("page") Optional<Integer> page, Model model,Principal principal) {
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
+        Page<OrderHistDto>  orders = orderService.orderHist(pageable, principal);
+        model.addAttribute("orders", orders);
+        model.addAttribute("maxPage", 5);
+
+        return "order/orderHist";
+    }
 
 }
