@@ -69,6 +69,7 @@ public class OrderService {
         return new PageImpl<>(orderHistDtos,pageable,totalCount);
     }
 
+    @Transactional(readOnly = true)
     public boolean validateCancelPerform(Long orderId, Principal principal) {
         Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
         Member member = memberRepository.findByEmail(principal.getName());
