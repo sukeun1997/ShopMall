@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.util.StringUtils;
+import shop_retry.constant.OrderStatus;
 import shop_retry.dto.OrderDto;
 import shop_retry.dto.OrderHistDto;
 import shop_retry.dto.OrderItemDto;
@@ -65,5 +67,26 @@ public class OrderService {
         }
 
         return new PageImpl<>(orderHistDtos,pageable,totalCount);
+    }
+
+    public boolean validateCancelPerform(Long orderId, Principal principal) {
+        Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
+        Member member = memberRepository.findByEmail(principal.getName());
+        if(!StringUtils.equals(member.getEmail(), order.getMember().getEmail())) {
+            return false;
+        }
+        return true;
+    }
+
+    public Long cancelOrder(Long orderId) {
+
+        Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
+
+        for (OrderItem orderItem : order.getOrderItemList()) {
+            Item item = itemRepository.findById(orderItem.getItem().getId()).orElseThrow(EntityNotFoundException::new);
+            item.addStock(orderItem.getCount());
+        }
+        order.setOrderStatus(OrderStatus.CANCEL);
+        return orderId;
     }
 }

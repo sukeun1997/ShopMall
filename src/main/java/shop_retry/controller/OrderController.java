@@ -50,13 +50,29 @@ public class OrderController {
     }
 
     @GetMapping({"/orders", "/orders/{page}"})
-    public String getOrderHist(@PathVariable("page") Optional<Integer> page, Model model,Principal principal) {
+    public String getOrderHist(@PathVariable("page") Optional<Integer> page, Model model, Principal principal) {
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
-        Page<OrderHistDto>  orders = orderService.orderHist(pageable, principal);
+        Page<OrderHistDto> orders = orderService.orderHist(pageable, principal);
         model.addAttribute("orders", orders);
+        model.addAttribute("page", pageable.getPageNumber());
         model.addAttribute("maxPage", 5);
 
         return "order/orderHist";
     }
 
+    @PostMapping("/order/{orderId}/cancel")
+    public @ResponseBody ResponseEntity cancelOrder(@PathVariable("orderId") Long orderId, Principal principal) {
+
+        if (!orderService.validateCancelPerform(orderId, principal)) {
+            return new ResponseEntity("주문자와 취소자가 동일하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+
+        try {
+            orderService.cancelOrder(orderId);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(orderId, HttpStatus.OK);
+    }
 }
