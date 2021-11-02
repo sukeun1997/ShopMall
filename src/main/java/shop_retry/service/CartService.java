@@ -4,16 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop_retry.dto.CartItemDto;
-import shop_retry.entity.Cart;
-import shop_retry.entity.CartItem;
-import shop_retry.entity.Item;
-import shop_retry.entity.Member;
-import shop_retry.repository.CartItemRepository;
-import shop_retry.repository.CartRepository;
-import shop_retry.repository.ItemRepository;
-import shop_retry.repository.MemberRepository;
+import shop_retry.dto.CartItemListDto;
+import shop_retry.entity.*;
+import shop_retry.repository.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -24,6 +22,7 @@ public class CartService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final CartItemRepository cartItemRepository;
+    private final ItemImgRepository itemImgRepository;
 
     //TODO
     public Long addCart(CartItemDto cartItemDto, String email) {
@@ -42,5 +41,28 @@ public class CartService {
         cartItemRepository.save(cartItem);
 
         return cart.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CartItemListDto> getCartList(Principal principal) {
+        List<CartItemListDto> cartItemListDtoList = new ArrayList<>();
+
+        Member member = memberRepository.findByEmail(principal.getName());
+
+        Cart cart = cartRepository.findByMemberId(member.getId());
+
+        if (cart == null) {
+            return cartItemListDtoList;
+        }
+
+        List<CartItem> cartItems = cartItemRepository.findByCartIdOrderByRegTimeDesc(cart.getId());
+
+        for (CartItem cartItem : cartItems) {
+            ItemImg itemImg = itemImgRepository.findByItemIdAndRepimgYn(cartItem.getItem().getId(), "Y");
+            CartItemListDto cartItemListDto = CartItemListDto.createCartItemListDto(cartItem, itemImg.getImgUrl());
+            cartItemListDtoList.add(cartItemListDto);
+        }
+
+        return cartItemListDtoList;
     }
 }
