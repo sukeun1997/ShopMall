@@ -90,4 +90,23 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.CANCEL);
         return orderId;
     }
+
+    public Long createOrder(List<OrderDto> orderDtoList, Principal principal) {
+
+
+        Member member = memberRepository.findByEmail(principal.getName());
+
+        List<OrderItem> orderItemList = new ArrayList<>();
+
+        for (OrderDto orderDto : orderDtoList) {
+            Item item = itemRepository.findById(orderDto.getItemId()).orElseThrow(EntityNotFoundException::new);
+            OrderItem orderItem = OrderItem.createOrderItem(item, orderDto.getCount());
+            orderItemList.add(orderItem);
+        }
+
+        Order order = Order.createOrder(member, orderItemList);
+        orderRepository.save(order);
+
+        return order.getId();
+    }
 }

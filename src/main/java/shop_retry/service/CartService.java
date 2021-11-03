@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.StringUtils;
 import shop_retry.dto.CartItemDto;
 import shop_retry.dto.CartItemListDto;
+import shop_retry.dto.CartOrderDto;
+import shop_retry.dto.OrderDto;
 import shop_retry.entity.*;
 import shop_retry.repository.*;
 
@@ -24,6 +26,7 @@ public class CartService {
     private final ItemRepository itemRepository;
     private final CartItemRepository cartItemRepository;
     private final ItemImgRepository itemImgRepository;
+    private final OrderService orderService;
 
     //TODO
     public Long addCart(CartItemDto cartItemDto, String email) {
@@ -101,6 +104,26 @@ public class CartService {
 
         CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(EntityNotFoundException::new);
         cartItemRepository.delete(cartItem);
+
+    }
+
+    public Long orderItems(CartOrderDto cartOrderDtoList, Principal principal) {
+        Long orderId;
+
+        List<OrderDto> orderDtoList = new ArrayList<>();
+
+        for (CartOrderDto cartOrderDto : cartOrderDtoList.getCartOrderDtoList()) {
+            CartItem cartItem = cartItemRepository.findById(cartOrderDto.getCartItemId()).orElseThrow(EntityNotFoundException::new);
+
+            OrderDto orderDto = OrderDto.createOrderDto(cartItem.getItem().getId(), cartItem.getCount());
+            orderDtoList.add(orderDto);
+            cartItemRepository.delete(cartItem);
+        }
+
+        orderId = orderService.createOrder(orderDtoList, principal);
+
+
+        return orderId;
 
     }
 }

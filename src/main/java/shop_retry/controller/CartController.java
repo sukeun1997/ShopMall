@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import shop_retry.dto.CartItemDto;
 import shop_retry.dto.CartItemListDto;
+import shop_retry.dto.CartOrderDto;
 import shop_retry.service.CartService;
 
 import javax.validation.Valid;
@@ -87,4 +88,26 @@ public class CartController {
         }
         return new ResponseEntity(cartItemId, HttpStatus.OK);
     }
+
+
+    @PostMapping("/cart/orders")
+    public @ResponseBody ResponseEntity cartItemOrder(@RequestBody CartOrderDto cartOrderDto, Principal principal) {
+
+        Long orderId;
+        if (cartOrderDto.getCartOrderDtoList() == null || cartOrderDto.getCartOrderDtoList().size() == 0) {
+
+            return new ResponseEntity("주문 상품을 선택 해 주세요.", HttpStatus.BAD_REQUEST);
+        }
+
+        for (CartOrderDto orderDto : cartOrderDto.getCartOrderDtoList()) {
+            if (!cartService.validateCartItem(orderDto.getCartItemId(), principal)) {
+                return new ResponseEntity<String>("주문 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        orderId = cartService.orderItems(cartOrderDto, principal);
+
+        return new ResponseEntity(orderId, HttpStatus.OK);
+    }
+
 }
