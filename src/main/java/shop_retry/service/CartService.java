@@ -92,4 +92,15 @@ public class CartService {
 
         return true;
     }
+
+    public void deleteCartItem(Long cartItemId, Principal principal) {
+
+        if (!validateCartItem(cartItemId, principal)) {
+            throw new IllegalArgumentException("수정 권한이 없습니다.");
+        }
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(EntityNotFoundException::new);
+        cartItemRepository.delete(cartItem);
+
+    }
 }

@@ -66,10 +66,25 @@ public class CartController {
     @ResponseBody
     public ResponseEntity updateCartItemCount(@PathVariable Long cartItemId, int count, Principal principal) {
 
-        Long updateCartItemId = cartService.updateCartItem(cartItemId, count, principal);
+        try {
+            cartService.updateCartItem(cartItemId, count, principal);
 
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(cartItemId, HttpStatus.OK);
 
-        return new ResponseEntity(updateCartItemId, HttpStatus.OK);
+    }
 
+    @DeleteMapping("/cartItem/{cartItemId}")
+    @ResponseBody
+    public ResponseEntity deleteCartItem(@PathVariable Long cartItemId, Principal principal) {
+
+        try {
+            cartService.deleteCartItem(cartItemId, principal);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(cartItemId, HttpStatus.OK);
     }
 }
