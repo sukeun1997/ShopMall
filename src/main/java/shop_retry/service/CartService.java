@@ -3,6 +3,7 @@ package shop_retry.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.util.StringUtils;
 import shop_retry.dto.CartItemDto;
 import shop_retry.dto.CartItemListDto;
 import shop_retry.entity.*;
@@ -64,5 +65,31 @@ public class CartService {
         }
 
         return cartItemListDtoList;
+    }
+
+    public Long updateCartItem(Long cartItemId, int count, Principal principal) {
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(EntityNotFoundException::new);
+
+        if (!validateCartItem(cartItemId, principal)) {
+            throw new IllegalArgumentException("변경 권한이 없습니다.");
+        }
+
+        cartItem.setCount(count);
+
+        return cartItemId;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean validateCartItem(Long cartItemId, Principal principal) {
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(EntityNotFoundException::new);
+        Member savedMember = cartItem.getCart().getMember();
+        Member curMember = memberRepository.findByEmail(principal.getName());
+
+        if (!StringUtils.equals(curMember.getId(), savedMember.getId())) {
+            return false;
+        }
+
+        return true;
     }
 }

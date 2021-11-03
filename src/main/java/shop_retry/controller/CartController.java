@@ -8,10 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import shop_retry.dto.CartItemDto;
 import shop_retry.dto.CartItemListDto;
 import shop_retry.service.CartService;
@@ -54,7 +51,6 @@ public class CartController {
 
     }
 
-
     @GetMapping("/cart")
     public String cartList(Model model, Principal principal) {
 
@@ -62,10 +58,18 @@ public class CartController {
 
         model.addAttribute("cartItems", cartItemListDtoList);
 
-
-
-
         return "cart/cartList";
     }
 
+
+    @PatchMapping("/cartItem/{cartItemId}")
+    @ResponseBody
+    public ResponseEntity updateCartItemCount(@PathVariable Long cartItemId, int count, Principal principal) {
+
+        Long updateCartItemId = cartService.updateCartItem(cartItemId, count, principal);
+
+
+        return new ResponseEntity(updateCartItemId, HttpStatus.OK);
+
+    }
 }
